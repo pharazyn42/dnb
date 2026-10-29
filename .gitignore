@@ -1,0 +1,28 @@
+# --- Licensed samples: never commit (SampleRadar licence forbids redistribution)
+Waveform/
+Sounds/
+*.zip
+
+# --- Rendered audio: large, and regenerated from code by the exporter
+Tracks/
+Library/**/*.wav
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.aif
+*.aiff
+
+# --- Video
+*.mov
+*.mp4
+
+# --- Waveform project files and backups (kept on the PC)
+*.tracktionedit
+*.tracktionedit.bak
+
+# --- Tooling
+node_modules/
+.DS_Store
+Thumbs.db
+desktop.ini

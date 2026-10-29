@@ -1,0 +1,124 @@
+<!doctype html>
+<html>
+<head><meta charset="utf-8"><title>strudel loop renderer</title></head>
+<body>
+<script type="module">
+// Runs inside a hidden browser. Loads Strudel's own engine and exposes
+// window.renderPart(), which the export script calls once per part.
+import * as S from '/strudel/index.mjs';
+
+// ---- make every Strudel function available to user code, as on strudel.cc
+Object.assign(window, S);
+
+// ---- capture rendered audio instead of letting Strudel download a file
+let lastBuffer = null;
+const origStart = OfflineAudioContext.prototype.startRendering;
+OfflineAudioContext.prototype.startRendering = function () {
+  return origStart.call(this).then((buf) => { lastBuffer = buf; return buf; });
+};
+let suppressDownload = false;
+const origClick = HTMLAnchorElement.prototype.click;
+HTMLAnchorElement.prototype.click = function () {
+  if (suppressDownload && this.download) return;   // swallow Strudel's own download
+  return origClick.call(this);
+};
+
+// ---- collect warnings so the script can report missing sounds etc.
+const warnings = [];
+const origLog = console.log, origWarn = console.warn, origErr = console.error;
+const note = (args) => {
+  const msg = args.map(String).join(' ').replace(/%c/g, '')
+    .replace(/\s*background-color:.*$/, '').replace(/^\[\w+\]\s*(error:\s*)?/i, '').trim();
+  if (/not found|error|failed|could not/i.test(msg)) warnings.push(msg.slice(0, 300));
+};
+console.log = (...a) => { note(a); origLog(...a); };
+console.warn = (...a) => { note(a); origWarn(...a); };
+console.error = (...a) => { note(a); origErr(...a); };
+
+// ---- one-time engine setup
+let ready = null;
+async function init(kitUrl) {
+  if (!ready) ready = (async () => {
+    await S.registerSynthSounds();
+    try { await S.registerZZFXSounds(); } catch {}
+    if (kitUrl) await S.samples(kitUrl);
+  })();
+  return ready;
+}
+
+// Evaluate user code the way the REPL does: every `$:` line becomes one
+// layer, `all(f)` post-processes the stack, `setcpm` sets the tempo.
+async function evaluateCode(code, kitUrl) {
+  const layers = [];
+  let post = null;
+  let cps = 0.5;
+  const P = S.Pattern.prototype;
+  const prevP = P.p;
+  P.p = function () { layers.push(this); return this; };
+  window.setcpm = (cpm) => { cps = cpm / 60; };
+  window.setcps = (c) => { cps = c; };
+  window.all = (f) => { post = f; };
+  window.hush = () => {};
+  // point the usual local-sampler URL at the exporter's own kit server
+  const userSamples = S.samples;
+  window.samples = (url, ...rest) => {
+    if (typeof url === 'string' && /localhost:5432/.test(url)) return userSamples(kitUrl);
+    return userSamples(url, ...rest);
+  };
+  try {
+    const { output } = S.transpiler(code, {});
+    const run = new Function('return (async () => {\n' + output + '\n})()');
+    await run();
+  } finally {
+    P.p = prevP;
+    window.samples = userSamples;
+  }
+  let pat = layers.length ? S.stack(...layers) : S.silence;
+  if (post) pat = post(pat);
+  return { pat, cps, layerCount: layers.length };
+}
+
+// Renders one chunk: only notes that START in [onsetsFrom, onsetsBefore) are
+// triggered; rendering runs from onsetsFrom until the last of those notes has
+// finished plus `tail` cycles (for releases), capped at renderTo.
+// Long parts are rendered as several chunks by the export script, because
+// Strudel's engine slows down as one render accumulates thousands of notes.
+window.renderPart = async ({ code, kitUrl, sampleRate, onsetsFrom, onsetsBefore, renderTo, tail }) => {
+  warnings.length = 0;
+  await init(kitUrl);
+  let { pat, cps, layerCount } = await evaluateCode(code, kitUrl);
+  pat = pat.filterHaps((h) => {
+    const b = h.whole.begin.valueOf();
+    return b >= onsetsFrom && b < onsetsBefore;
+  });
+  let lastEnd = onsetsBefore;
+  for (const h of pat.queryArc(onsetsFrom, onsetsBefore)) {
+    if (h.hasOnset()) lastEnd = Math.max(lastEnd, h.whole.end.valueOf());
+  }
+  const begin = onsetsFrom;
+  const end = Math.min(renderTo, lastEnd + tail);
+  lastBuffer = null;
+  suppressDownload = true;
+  try {
+    // Strudel's own export function: same scheduling and engine as the export tab
+    await S.renderPatternAudio(pat, cps, begin, end, sampleRate, undefined, false, 'part');
+  } finally {
+    suppressDownload = false;
+  }
+  if (!lastBuffer) throw new Error('render produced no audio');
+  const ch = [];
+  for (let c = 0; c < lastBuffer.numberOfChannels; c++) {
+    const f = lastBuffer.getChannelData(c);
+    // hand the samples to Node as base64 Float32
+    const bytes = new Uint8Array(f.buffer, f.byteOffset, f.byteLength);
+    let bin = '';
+    for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode(...bytes.subarray(i, i + 0x8000));
+    ch.push(btoa(bin));
+  }
+  return { channels: ch, sampleRate: lastBuffer.sampleRate, length: lastBuffer.length,
+           begin, end, cps, layerCount, warnings: [...new Set(warnings)] };
+};
+window.rendererReady = true;
+</script>
+</body>
+</html>

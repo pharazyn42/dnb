@@ -1,0 +1,16 @@
+file,track,group,part,type,bars,bpm,key,sample_rate,bit_depth,length_s,peak_dbfs,source,code_hash,exported_at
+Daybreak/drums/fill_big_1bar_174.wav,Daybreak,drums,fill_big,oneshot,1,174,Eb,48000,24,1.649,-4.8,daybreak-drums.strudel.js,45789237bf68,2026-10-12T16:49:12Z
+Daybreak/drums/fill_small_1bar_174.wav,Daybreak,drums,fill_small,oneshot,1,174,Eb,48000,24,1.649,-12.6,daybreak-drums.strudel.js,68e979dc51c6,2026-10-12T16:49:12Z
+Daybreak/drums/ghost_8bars_174.wav,Daybreak,drums,ghost,loop,8,174,Eb,48000,24,11.034,-16.3,daybreak-drums.strudel.js,9b2bb953bb02,2026-10-12T16:49:12Z
+Daybreak/drums/ghost_end_8bars_174.wav,Daybreak,drums,ghost_end,loop,8,174,Eb,48000,24,11.034,-16.3,daybreak-drums.strudel.js,ff2d1b11d51b,2026-10-12T17:08:44Z
+Daybreak/drums/hat_soft_8bars_174.wav,Daybreak,drums,hat_soft,loop,8,174,Eb,48000,24,11.034,-13.0,daybreak-drums.strudel.js,5187a7800780,2026-10-12T16:51:41Z
+Daybreak/drums/hats_8bars_174.wav,Daybreak,drums,hats,loop,8,174,Eb,48000,24,11.034,-10.4,daybreak-drums.strudel.js,519e8f689b0e,2026-10-12T16:49:12Z
+Daybreak/drums/kick_A_8bars_174.wav,Daybreak,drums,kick_A,loop,8,174,Eb,48000,24,11.034,-4.9,daybreak-drums.strudel.js,535b5ed4ac05,2026-10-12T16:49:12Z
+Daybreak/drums/kick_A_end_8bars_174.wav,Daybreak,drums,kick_A_end,loop,8,174,Eb,48000,24,11.034,-4.9,daybreak-drums.strudel.js,b42657bc828e,2026-10-12T17:08:44Z
+Daybreak/drums/kick_B_8bars_174.wav,Daybreak,drums,kick_B,loop,8,174,Eb,48000,24,11.034,-3.0,daybreak-drums.strudel.js,8b47784bb2c0,2026-10-12T16:49:12Z
+Daybreak/drums/kick_B_end_8bars_174.wav,Daybreak,drums,kick_B_end,loop,8,174,Eb,48000,24,11.034,-3.0,daybreak-drums.strudel.js,53d65d44fa83,2026-10-12T17:08:44Z
+Daybreak/drums/kick_muffled_8bars_174.wav,Daybreak,drums,kick_muffled,loop,8,174,Eb,48000,24,11.034,-4.3,daybreak-drums.strudel.js,5804247f4354,2026-10-12T16:51:41Z
+Daybreak/drums/roll_4bars_174.wav,Daybreak,drums,roll,oneshot,4,174,Eb,48000,24,5.790,-6.5,daybreak-drums.strudel.js,dfeda92a77c6,2026-10-12T16:49:12Z
+Daybreak/drums/snare_8bars_174.wav,Daybreak,drums,snare,loop,8,174,Eb,48000,24,11.034,-5.2,daybreak-drums.strudel.js,d10abb68bb11,2026-10-12T16:49:12Z
+Daybreak/drums/snare_end_8bars_174.wav,Daybreak,drums,snare_end,loop,8,174,Eb,48000,24,11.034,-5.2,daybreak-drums.strudel.js,8f7c0e042668,2026-10-12T17:08:44Z
+Daybreak/drums/ticks_8bars_174.wav,Daybreak,drums,ticks,loop,8,174,Eb,48000,24,11.034,-26.0,daybreak-drums.strudel.js,6b91741b46f9,2026-10-12T16:49:12Z
