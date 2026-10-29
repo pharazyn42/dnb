@@ -118,6 +118,43 @@ window.renderPart = async ({ code, kitUrl, sampleRate, onsetsFrom, onsetsBefore,
   return { channels: ch, sampleRate: lastBuffer.sampleRate, length: lastBuffer.length,
            begin, end, cps, layerCount, warnings: [...new Set(warnings)] };
 };
+// QA: evaluate the code and list every note onset per layer, without
+// rendering audio. Layers come back in the same order as the `$:` lines.
+window.inspectCode = async ({ code, from, to }) => {
+  warnings.length = 0;
+  // pattern queries don't need sounds, so skip loading samples entirely
+  const realSamples = S.samples;
+  const layers = [];
+  const P = S.Pattern.prototype;
+  const prevP = P.p;
+  P.p = function () { layers.push(this); return this; };
+  let post = null;
+  window.setcpm = () => {}; window.setcps = () => {};
+  window.all = (f) => { post = f; };
+  window.hush = () => {};
+  window.samples = async () => {};
+  try {
+    const { output } = S.transpiler(code, {});
+    await new Function('return (async () => {\n' + output + '\n})()')();
+  } finally {
+    P.p = prevP;
+    window.samples = realSamples;
+  }
+  const toMidi = (n) => {
+    if (typeof n === 'number') return n;
+    if (typeof n === 'string') { try { return S.noteToMidi(n); } catch { return null; } }
+    if (n && typeof n.valueOf === 'function') return Number(n.valueOf());
+    return null;
+  };
+  return layers.map((L) => {
+    const pat = post ? post(L) : L;
+    return pat.queryArc(from, to).filter((h) => h.hasOnset()).map((h) => {
+      const v = typeof h.value === 'object' ? h.value : { value: h.value };
+      return [h.whole.begin.valueOf(), h.whole.end.valueOf(), v.s ?? null,
+              v.note !== undefined ? toMidi(v.note) : null, typeof v.nudge === 'number' ? v.nudge : 0];
+    });
+  });
+};
 window.rendererReady = true;
 </script>
 </body>

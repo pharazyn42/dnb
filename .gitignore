@@ -22,7 +22,7 @@ Library/**/*.wav
 *.tracktionedit.bak
 
 # --- Tooling
-node_modules/
+node_modules
 .DS_Store
 Thumbs.db
 desktop.ini

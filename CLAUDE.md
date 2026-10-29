@@ -37,7 +37,13 @@ Andrew writes melodic, piano-led liquid DnB (174 BPM) in Strudel, exports parts 
 - It serves the kit itself (same ordering rules as `@strudel/sampler`) and rewrites `samples('http://localhost:5432/')` to it.
 - Output is 24-bit / 48 kHz stereo. It warns on silent parts, missing sounds, clipping and unused part names.
 
+## Song spec and QA (`docs/song-spec.md`)
+- Each full track has `Strudel/<track>.song.json`: key, chords (tones + allowed tensions + bass), sections (`has`/`not` parts), fills, gaps, drops, mix targets. It is the contract; write parts to fit it, and change the spec (not just the code) when the plan changes.
+- `node tools/strudel-loop-exporter/qa.mjs Strudel/<track>.song.json` (`qa.cmd` on the PC) must pass before handing a track back. It writes `qa/<title>.md` and exits 1 on failure.
+- QA needs every layer as `$: part('name', ...)` and a `'song'` PART mode. In the sandbox: set `CHROMIUM_PATH` and clear `HTTPS_PROXY` for the run.
+
 ## Verification before handing anything back
+0. Run QA against the spec (above).
 1. Evaluate the code with Strudel's engine (`@strudel/core`, `mini`, `tonal`, `transpiler`) and check what plays in each bar.
 2. Render with the exporter, then measure: exact lengths, hit timing vs grid, pitches (FFT), peaks, section loudness, loop seams.
 3. Report what was measured, and what Andrew still needs to judge by ear.

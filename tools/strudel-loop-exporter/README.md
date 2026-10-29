@@ -120,3 +120,7 @@ Point Waveform's file browser at the `Library` folder. Set the project to 174 BP
 - Built on `@strudel/web` 1.3.0 (Strudel's published engine) and Playwright. Pinned versions mean an update to strudel.cc won't silently change your exports. To move to a newer Strudel later, change the version in `package.json` and run `npm.cmd install` again.
 - Strudel is AGPL-3.0, so this tool is too. It doesn't affect your music.
 - Sample licences still apply to what you export: keep `LICENCES.md` up to date.
+
+## Song QA
+
+`qa.cmd <track>.song.json` (from `Strudel/`) checks a track against its spec without rendering audio. See `docs/song-spec.md`.

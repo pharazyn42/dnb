@@ -1,0 +1,69 @@
+{
+  "$comment": "Song spec: the plan the workbench must implement. qa.mjs checks the code against it. Bars are 1-based and inclusive.",
+  "title": "Track2",
+  "workbench": "track2.strudel.js",
+  "bpm": 174,
+  "beatsPerBar": 4,
+  "bars": 128,
+  "key": "A minor",
+
+  "harmony": {
+    "$comment": "Progression repeats every 16 bars. tones = chord tones, tensions = colour notes that are fine to play, bass = the note the bass part should play.",
+    "repeatEvery": 16,
+    "chords": [
+      { "bars": [1, 2],   "symbol": "Am",       "tones": ["A", "C", "E"],      "tensions": ["B", "D", "G"],      "bass": "A" },
+      { "bars": [3, 4],   "symbol": "Am9",      "tones": ["A", "C", "E", "G"], "tensions": ["B", "D"],           "bass": "A" },
+      { "bars": [5, 6],   "symbol": "Fmaj7",    "tones": ["F", "A", "C", "E"], "tensions": ["G", "B", "D"],      "bass": "F" },
+      { "bars": [7, 8],   "symbol": "Am(add9)", "tones": ["A", "C", "E", "B"], "tensions": ["D", "G"],           "bass": "A" },
+      { "bars": [9, 10],  "symbol": "Am",       "tones": ["A", "C", "E"],      "tensions": ["B", "D", "G"],      "bass": "A" },
+      { "bars": [11, 11], "symbol": "C/G",      "tones": ["C", "E", "G"],      "tensions": ["A", "B", "D"],      "bass": "G" },
+      { "bars": [12, 12], "symbol": "Am9",      "tones": ["A", "C", "E", "G"], "tensions": ["B", "D"],           "bass": "A" },
+      { "bars": [13, 14], "symbol": "Fmaj7/A",  "tones": ["F", "A", "C", "E"], "tensions": ["G", "B", "D"],      "bass": "F" },
+      { "bars": [15, 16], "symbol": "Am(add9)", "tones": ["A", "C", "E", "B"], "tensions": ["D", "G"],           "bass": "A" }
+    ],
+    "pitchedParts": ["piano_rh", "piano_lh", "pad", "bass"],
+    "bassPart": "bass"
+  },
+
+  "groups": {
+    "$comment": "Names used in section rules for 'any of these parts'.",
+    "kick": ["kick_A", "kick_B"],
+    "beat": ["kick_A", "kick_B", "snare", "ghost"]
+  },
+
+  "sections": [
+    { "name": "intro",     "bars": [1, 16],    "has": ["piano_rh", "piano_lh"],                                   "not": ["beat", "bass"] },
+    { "name": "drop 1",    "bars": [17, 48],   "has": ["kick", "snare", "hats", "bass", "piano_rh", "piano_lh", "pad"], "not": ["hat_soft", "kick_muffled"] },
+    { "name": "breakdown", "bars": [49, 64],   "has": ["piano_rh", "piano_lh", "pad"],                            "not": ["beat", "hats", "bass"] },
+    { "name": "build",     "bars": [65, 80],   "has": ["piano_lh", "pad", "hat_soft"],                            "not": ["beat", "hats", "piano_rh"] },
+    { "name": "drop 2",    "bars": [81, 112],  "has": ["kick", "snare", "hats", "ticks", "bass", "piano_rh", "piano_lh", "pad"], "not": ["hat_soft", "kick_muffled"] },
+    { "name": "outro beat","bars": [113, 120], "has": ["kick", "snare", "hats", "piano_rh", "piano_lh", "pad"] },
+    { "name": "outro",     "bars": [121, 128], "has": ["piano_rh", "piano_lh", "pad"],                            "not": ["beat", "bass"] }
+  ],
+
+  "fills": {
+    "$comment": "small fills sit on top of the beat; big fills replace kick + snare + ghost for that bar.",
+    "small": [24, 40, 88, 104],
+    "big": [32, 48, 96, 112],
+    "smallPart": "fill_small",
+    "bigPart": "fill_big"
+  },
+
+  "gaps": {
+    "$comment": "Second half of these bars is a breath before a drop: only these parts may start a note there.",
+    "bars": [16, 80],
+    "allowed": ["revhit", "air"]
+  },
+
+  "drops": {
+    "$comment": "Beat 1 of these bars must have the impact.",
+    "bars": [17, 81],
+    "impactPart": "impact"
+  },
+
+  "mix": {
+    "$comment": "Targets for exported audio, checked from Library/library.csv.",
+    "maxPeakDbfs": -1,
+    "silentBelowDbfs": -80
+  }
+}
