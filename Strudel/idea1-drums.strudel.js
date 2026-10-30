@@ -120,7 +120,7 @@ const song = {
   fill_big:     at([48, 48], [72, 72]),
   fill_tumble:  at([56, 56]),
 }
-preview.song = song
+preview['song'] = song   // quoted so the exporter's "is this part used?" check sees it
 
 // "_end" versions: same loop, bar 8 left silent so a big fill can take it
 const endBar = "<1!7 0>"
