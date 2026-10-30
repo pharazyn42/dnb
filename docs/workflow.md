@@ -21,7 +21,22 @@ Strudel (with your own licence-clean samples) → export audio from Strudel → 
 | VB-Cable *(optional)* | Only for the fallback recording route (see end) |
 | loopMIDI *(optional)* | Only for the MIDI route (see end) |
 
-**Strudel offline:** install strudel.cc as an app from Chrome so it works without internet (see the [offline guide](https://strudel.cc/learn/pwa/#using-strudel-offline)).
+**Strudel offline:** the most reliable route is to run Strudel from source (needs Node.js, pnpm and Git):
+
+```
+npm install -g pnpm
+git clone https://codeberg.org/uzu/strudel.git C:\HomeProjects\strudel
+cd C:\HomeProjects\strudel
+pnpm i
+pnpm dev
+```
+
+Then open the URL it prints (normally `http://localhost:4321`). To match the exporter, check out the tag for Strudel 1.3.0 (`git tag` lists them) and run `pnpm i` again. The lighter alternative is installing strudel.cc as an app from Chrome (see the [offline guide](https://strudel.cc/learn/pwa/#using-strudel-offline)), but that only caches what you've already loaded.
+
+**Offline sounds:**
+- Your kit: run `npx @strudel/sampler` in the `liquid-kit` folder (serves on port 5432).
+- Salamander piano: run `node tools/fetch-piano.mjs --serve` from the repo root. It downloads the piano once to `..\strudel-samples` (outside the repo, so nothing is committed), then serves it on port 5433. On later runs it reuses the files without needing the internet.
+- In the workbench, set `const OFFLINE = true` to load the piano from `http://localhost:5433/piano.json`, or `false` to fetch it from GitHub. If the exporter renders with `OFFLINE = true`, keep the piano server running.
 
 ---
 

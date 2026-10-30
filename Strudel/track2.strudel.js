@@ -24,7 +24,10 @@
 // @export song     128  oneshot   the whole arranged track, as a reference bounce
 
 samples('http://localhost:5432/')   // your liquid-kit (run the sampler)
-samples('https://raw.githubusercontent.com/felixroos/dough-samples/main/piano.json')  // Salamander piano
+// Piano source: false = fetch from GitHub; true = local copy (node tools/fetch-piano.mjs --serve)
+const OFFLINE = false
+samples(OFFLINE ? 'http://localhost:5433/piano.json'
+                : 'https://raw.githubusercontent.com/felixroos/dough-samples/main/piano.json')  // Salamander piano
 
 setcpm(174/4)
 
