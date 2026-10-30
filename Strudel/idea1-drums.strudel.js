@@ -12,6 +12,7 @@
 //      'groove_b' : busier version (push kicks, busier ghosts + hats)
 //      'phrase'   : 16 bars: 8 of groove, 8 of groove_b, big fill on bar 16
 //      'build'    : 8 bars: soft hats, muffled kick, roll in bars 5-8
+//      'song'     : the whole 80-bar drum arrangement (see ARRANGEMENT below)
 //    or to a single part name to hear just that layer.
 // 2. Tweak FEEL or any line marked TWEAK, then re-run (Ctrl+Enter).
 // 3. Export everything to the loop library (from the Strudel folder):
@@ -44,6 +45,7 @@
 // @export fill_small     1  oneshot   pickups ON TOP of a normal beat bar
 // @export fill_big       1  oneshot   REPLACES kick + snare + ghost for that bar
 // @export fill_tumble    1  oneshot   pitched-down snares, tom-style, REPLACES the beat
+// @export song          80  oneshot   the whole drum arrangement, as a reference bounce
 
 samples('http://localhost:5432/')   // your liquid-kit (run the sampler)
 
@@ -85,6 +87,40 @@ const preview = {
               fill_big: "<0!15 1>" },
   build:    { hat_soft: 1, kick_muffled: "<0!4 1!4>", roll: "<0!4 1!4>" },
 }
+
+// ===================== ARRANGEMENT =====================
+// bar numbers are 1-based. at([from, to], ...) = a per-bar mask, on in those bars
+//
+//    1- 8  Intro       soft hats; muffled kick joins at bar 5
+//    9-24  Verse       idea 1 groove (A level); ticks join at bar 17; small fill, bar 16
+//   25-32  Build       soft hats + muffled kick; roll in bars 29-32
+//   33-48  Drop 1      B level (push kicks, busy ghosts, hat pickups, ticks);
+//                      small fill bar 40; big fill replaces the beat on bar 48
+//   49-56  Breakdown   soft hats + muffled kick; snare returns at bar 53;
+//                      tumble fill replaces bar 56
+//   57-72  Drop 2      as Drop 1, small fill bar 64, big fill on bar 72
+//   73-80  Outro       A level groove for 4 bars, then soft hats + muffled kick
+const TOTAL = 80
+const at = (...ranges) => mini('<' + Array.from({ length: TOTAL }, (_, i) =>
+  ranges.some(([a, b]) => i + 1 >= a && i + 1 <= b) ? '1' : '0').join(' ') + '>')
+
+const song = {
+  hat_soft:     at([1, 8], [25, 32], [49, 56], [77, 80]),
+  kick_muffled: at([5, 8], [25, 32], [49, 55], [77, 80]),
+  kick_A:       at([9, 24], [73, 76]),
+  snare:        at([9, 24], [33, 47], [53, 55], [57, 71], [73, 76]),
+  ghost_A:      at([9, 24], [73, 76]),
+  hats:         at([9, 24], [73, 76]),
+  ticks:        at([17, 24], [33, 48], [57, 72]),
+  kick_B:       at([33, 47], [57, 71]),
+  ghost_B:      at([33, 47], [57, 71]),
+  hats_B:       at([33, 48], [57, 72]),
+  roll:         at([29, 32]),
+  fill_small:   at([16, 16], [40, 40], [64, 64]),
+  fill_big:     at([48, 48], [72, 72]),
+  fill_tumble:  at([56, 56]),
+}
+preview.song = song
 
 // "_end" versions: same loop, bar 8 left silent so a big fill can take it
 const endBar = "<1!7 0>"
