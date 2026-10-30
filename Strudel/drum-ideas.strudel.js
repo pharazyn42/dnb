@@ -109,10 +109,9 @@ $: part('idea1_hats', stack(
 
 // ===================== IDEA 2: SKIPPING =====================
 // bar 1: kick on 1, "&" of 2, "&" of 3; bar 2 adds a push on the "e" of 4
-$: part('idea2_kick', cat(
+$: part('idea2_kick', stack(
   s("kick ~ ~ ~ ~ ~ kick ~ ~ ~ kick ~ ~ ~ ~ ~"),
-  s("kick ~ ~ ~ ~ ~ kick ~ ~ ~ kick ~ ~ kick ~ ~")).n(11)
-  .gain(cat(1, "1 .8"))
+  cat(silence, s("~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ kick ~ ~")).gain(.8)).n(11)
   .velocity(vary(.95)))
 
 $: part('idea2_snare', s("~ ~ ~ ~ snare ~ ~ ~ ~ ~ ~ ~ snare ~ ~ ~").n(13)
@@ -135,10 +134,9 @@ $: part('idea2_hats', stack(
   .speed(pitch(.015)))
 
 // ===================== IDEA 3: SHUFFLED =====================
-$: part('idea3_kick', cat(
+$: part('idea3_kick', stack(
   s("kick ~ ~ ~ ~ ~ ~ ~ ~ ~ kick ~ ~ ~ ~ ~"),
-  s("kick ~ ~ ~ ~ ~ ~ ~ ~ ~ kick ~ ~ ~ kick ~")).n(11)
-  .gain(cat(1, "1 .75"))
+  cat(silence, s("~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ kick ~")).gain(.75)).n(11)
   .velocity(vary(.95)))
 
 $: part('idea3_snare', s("~ ~ ~ ~ snare ~ ~ ~ ~ ~ ~ ~ snare ~ ~ ~").n(13)
